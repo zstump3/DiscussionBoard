@@ -10,5 +10,9 @@ namespace DiscussionBoard.Models
 
         [StringLength(500)]
         public string Description { get; set; } = String.Empty;
+
+        //public DiscussionThread? DiscussionThreadId { get; set; }
+
+        public ICollection<DiscussionThread> DiscussionThreads  { get; set; } = new List<DiscussionThread>();
     }
 }

@@ -8,7 +8,11 @@ namespace DiscussionBoard.Data
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+            // base.OnModelCreating(builder);
+            // ModelBuilder.Entity<Forums>()
+            //     .HasMany(f => f.DiscussionThread)
+
+
 
         }
     }

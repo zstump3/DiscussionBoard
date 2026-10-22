@@ -7,7 +7,7 @@ public class ForumsModel : PageModel
     private readonly ForumService _forums;
     private readonly ILogger<ForumsModel> _logger;
 
-    public List<Forum> Items { get; private set; } = [];
+    public List<Models.Forum> Items { get; private set; } = [];
 
     /// <summary>
     /// The Forums page, displaying all active forums
