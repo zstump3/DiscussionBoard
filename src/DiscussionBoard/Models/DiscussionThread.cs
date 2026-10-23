@@ -2,7 +2,9 @@
 {
     public class DiscussionThread : DiscussionBase
     {
-        public Post? PostsId { get; set; }
-        public ICollection<Post>  Posts { get; set; } = new List<Post>();
+        public int ForumId { get; set; }
+        public Forum Forum { get; set; } = null!;
+
+        public ICollection<Post> Posts { get; set; } = new List<Post>();
     }
 }
