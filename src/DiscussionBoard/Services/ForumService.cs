@@ -1,17 +1,23 @@
+using DiscussionBoard.Data;
 using DiscussionBoard.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiscussionBoard.Services
 {
-    public interface ForumService
+    public class ForumService
     {
-        public bool GetAllAsync()
+        private readonly ApplicationDbContext _context;
+
+        public ForumService(ApplicationDbContext context)
         {
-            if (IsDeleted() == false)
-            {
+            _context = context;
+        }
 
-            }
-
-            return true;
+        public async Task<List<Forum>> GetAllAsync()
+        {
+            return await _context.Forums
+                .Where(f => f.IsDeleted == false)
+                .ToListAsync();
         }
     }
 }
