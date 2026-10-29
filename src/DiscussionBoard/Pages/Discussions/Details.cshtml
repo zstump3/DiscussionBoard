@@ -1,0 +1,49 @@
+﻿@page "/Discussion/{threadId}"
+@model DiscussionBoard.Pages.Discussions.DetailsModel
+
+@{
+    ViewData["Title"] = Model.Discussion.Title;
+}
+
+<h1>@Model.Discussion.Title</h1>
+
+<p>@Model.Discussion.Content</p>
+
+<hr />
+
+<h2>Replies</h2>
+
+@foreach (var post in Model.Posts)
+{
+    <partial name="/Pages/Discussions/_PostTree.cshtml"
+             model="post" />
+}
+
+    <h3>Reply to Discussion</h3>
+
+    <form method="post"
+          asp-page-handler="Reply"
+          asp-route-threadId="@Model.Discussion.Id">
+
+        <div asp-validation-summary="All"
+             class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Input.Content"
+                   class="form-label"></label>
+
+            <textarea asp-for="Input.Content"
+                      class="form-control"></textarea>
+
+            <span asp-validation-for="Input.Content"
+                  class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Post Reply
+        </button>
+    </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

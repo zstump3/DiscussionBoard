@@ -1,0 +1,14 @@
+﻿@model DiscussionBoard.Models.DiscussionThread
+
+<article class="card mb-3">
+    <div class="card-body">
+        <h2 class="h5">
+            <a asp-page="/Discussions/Details"
+               asp-route-threadId="@Model.Id">
+                @Model.Title
+            </a>
+        </h2>
+
+        <p>@Model.Content</p>
+    </div>
+</article>

@@ -1,0 +1,15 @@
+﻿@page "/Forum/{id}"
+@model DiscussionBoard.Pages.DetailsModel
+
+@{
+    ViewData["Title"] = Model.Forum.Name;
+}
+
+<h1>@Model.Forum.Name</h1>
+
+<p>@Model.Forum.Description</p>
+
+@foreach (var thread in Model.Threads)
+{
+    <partial name="/Pages/Forums/_ThreadCard.cshtml" model="thread" />
+}

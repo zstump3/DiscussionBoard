@@ -5,7 +5,7 @@ namespace DiscussionBoard.Models
     public class DiscussionBase : EntityBase
     {
         [Required]
-        [StringLength (100)]
+        [MaxLength (100)]
         public string Title { get; set; } = string.Empty;
 
         [Required]
