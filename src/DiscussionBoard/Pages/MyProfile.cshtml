@@ -1,0 +1,79 @@
+﻿@page
+@model DiscussionBoard.Pages.MyProfileModel
+@using DiscussionBoard.Services
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<h1>My Profile</h1>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div class="alert alert-success" role="alert">
+        @message
+    </div>
+}
+
+<div class="mb-3">
+    <h4>Current Avatar</h4>
+
+    <img src="@(AvatarCatalog.ImagePath(Model.Input.AvatarId))"
+         alt="Your current avatar"
+         width="100"
+         height="100" />
+</div>
+
+<form method="post">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Input.DisplayName"
+               class="form-label">
+            Display Name
+        </label>
+
+        <input asp-for="Input.DisplayName"
+               class="form-control" />
+
+        <span asp-validation-for="Input.DisplayName"
+              class="text-danger"></span>
+    </div>
+
+    <fieldset class="mb-3">
+        <legend>Choose Your Avatar</legend>
+
+        @foreach (var avatar in AvatarCatalog.Options)
+        {
+            <div class="form-check mb-3">
+
+                <input asp-for="Input.AvatarId"
+                       type="radio"
+                       id="avatar-@avatar.Id"
+                       value="@avatar.Id"
+                       class="form-check-input" />
+
+                <label for="avatar-@avatar.Id"
+                       class="form-check-label">
+
+                    <img src="@(AvatarCatalog.ImagePath(avatar.Id))"
+                         alt="@avatar.DisplayName avatar"
+                         width="60"
+                         height="60" />
+
+                    @avatar.DisplayName
+                </label>
+
+            </div>
+        }
+
+        <span asp-validation-for="Input.AvatarId"
+              class="text-danger"></span>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">
+        Save Changes
+    </button>
+
+</form>
