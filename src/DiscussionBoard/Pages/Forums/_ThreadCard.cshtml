@@ -1,4 +1,17 @@
-﻿@model DiscussionBoard.Models.DiscussionThread
+﻿@using DiscussionBoard.Services
+@model DiscussionBoard.Models.DiscussionThread
+
+@{
+    var displayName = String.IsNullOrWhiteSpace(Model.ApplicationUser?.DisplayName)
+        ? "Unconfigured User" : Model.ApplicationUser.DisplayName;
+
+    var avatarId = Model.ApplicationUser?.AvatarId ?? "default";
+
+    if (!AvatarCatalog.IsValid(avatarId))
+    {
+        avatarId = "default";
+    }
+}
 
 <article class="card mb-3">
     <div class="card-body">
@@ -8,6 +21,15 @@
                 @Model.Title
             </a>
         </h2>
+
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <img src="@AvatarCatalog.ImagePath(avatarId)"
+                 class="rounded-circle img-fluid"
+                 alt="User Profile"
+                 style="width: 25px; height: 25px; object-fit: cover;" />
+
+            <span>@displayName</span>
+        </div>
 
         <p>@Model.Content</p>
     </div>

@@ -32,6 +32,7 @@ namespace DiscussionBoard.Pages
             Forum = forum;
 
             Threads = await _context.DiscussionThreads
+                .Include(d=> d.ApplicationUser)
                 .Where(d => d.ForumId == forum.Id)
                 .ToListAsync();
 

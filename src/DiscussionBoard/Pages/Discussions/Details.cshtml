@@ -1,11 +1,32 @@
 ﻿@page "/Discussion/{threadId}"
+@using DiscussionBoard.Services
 @model DiscussionBoard.Pages.Discussions.DetailsModel
 
 @{
     ViewData["Title"] = Model.Discussion.Title;
+
+    var displayName = string.IsNullOrWhiteSpace(Model.Discussion.ApplicationUser?.DisplayName)
+        ? "Unconfigured User"
+        : Model.Discussion.ApplicationUser.DisplayName;
+
+    var avatarId = Model.Discussion.ApplicationUser?.AvatarId ?? "default";
+
+    if (!AvatarCatalog.IsValid(avatarId))
+    {
+        avatarId = "default";
+    }
 }
 
 <h1>@Model.Discussion.Title</h1>
+
+<div class="d-flex align-items-center gap-2 mb-2">
+    <img src="@AvatarCatalog.ImagePath(avatarId)"
+         class="rounded-circle img-fluid"
+         alt="User Profile"
+         style="width: 25px; height: 25px; object-fit: cover;" />
+
+    <span>@displayName</span>
+</div>
 
 <p>@Model.Discussion.Content</p>
 

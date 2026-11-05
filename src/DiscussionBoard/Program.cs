@@ -8,8 +8,19 @@ using Serilog.Formatting.Compact;
 
 namespace DiscussionBoard
 {
+    /// <summary>
+    /// Configures and starts the DiscussionBoard Application.
+    /// Registers application services, database connection,
+    /// authentication, logging and the middleware
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry point for the application.
+        /// Configures application dependencies, builds the web application,
+        /// and starts the HTTP pipeline.
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
