@@ -52,7 +52,7 @@ namespace DiscussionBoard
             builder.Services.AddRazorPages(options =>
             {
                 options.Conventions.AuthorizeFolder("/Forums");
-                options.Conventions.AuthorizeFolder("/Discussions");
+                //options.Conventions.AuthorizeFolder("/Discussions");
                     options.Conventions.AuthorizePage("/MyProfile");
             });
 
