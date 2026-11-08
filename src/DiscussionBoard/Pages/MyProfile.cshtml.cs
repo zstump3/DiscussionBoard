@@ -7,20 +7,41 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DiscussionBoard.Pages
 {
+    /// <summary>
+    /// Handles displaying and updating the current user's profile information.
+    /// </summary>
     public class MyProfileModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserProfileService _userProfileService;
 
+
+        /// <summary>
+        /// Initializes a new instance of the MyProfileModel class.
+        /// </summary>
+        /// <param name="userManager">
+        /// The manager used to retrieve and update user accounts
+        /// </param>
+        /// <param name="userProfileService">
+        /// The service used to validate display name availability
+        /// </param>
         public MyProfileModel(UserManager<ApplicationUser> userManager, IUserProfileService userProfileService)
         {
             _userManager = userManager;
             _userProfileService = userProfileService;
         }
 
+        /// <summary>
+        /// Gets or sets the profile information submitted by the user.
+        /// </summary>
         [BindProperty]
         public UserProfile Input { get; set; } = new();
 
+        /// <summary>
+        /// Retrieves the current user's profile information
+        /// and populates the profile form.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -37,6 +58,14 @@ namespace DiscussionBoard.Pages
             };
         }
 
+        /// <summary>
+        /// Validates and saves changes to the current user's display name and selected avatar.
+        /// </summary>
+        /// <returns>
+        /// A redirect to the profile page when successful,
+        /// the current page when validation fails, or an authentication
+        /// challenge if the user cannot be retrieved.
+        /// </returns>
         public async Task<IActionResult> OnPostAsync()
         {
             Input.DisplayName = (Input.DisplayName ?? string.Empty).Trim();
