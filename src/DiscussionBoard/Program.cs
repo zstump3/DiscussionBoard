@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using Serilog.Formatting.Compact;
 
@@ -65,6 +66,18 @@ namespace DiscussionBoard
             builder.Services.AddScoped<PostService>();
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
             builder.Services.AddScoped<IApplicationAuthorizationService, ApplicationAuthorizationService>();
+            builder.Services.AddScoped<IAuthorizationHandler, IsOwnerOrAdminHandler>();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    ApplicationAuthorizationPolicies.IsOwnerOrAdmin,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.AddRequirements(new IsOwnerOrAdminRequirement());
+                    });
+            });
 
 
             var app = builder.Build();
