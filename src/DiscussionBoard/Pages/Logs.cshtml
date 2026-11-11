@@ -42,3 +42,36 @@
         </tbody>
     </table>
 </div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Log pagination">
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-page="/Logs"
+                   asp-route-PageNumber="@(Model.PageNumber - 1)"
+                   asp-route-Level="@Model.Level">
+                    Previous
+                </a>
+            </li>
+
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page @Model.PageNumber of @Model.TotalPages
+                </span>
+            </li>
+
+            <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-page="/Logs"
+                   asp-route-PageNumber="@(Model.PageNumber + 1)"
+                   asp-route-Level="@Model.Level">
+                    Next
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+}

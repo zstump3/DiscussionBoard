@@ -1,5 +1,7 @@
-﻿using DiscussionBoard.Models;
+﻿using DiscussionBoard.Authorization;
+using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,6 +10,7 @@ namespace DiscussionBoard.Pages
     /// <summary>
     /// Logs PageModel for displaying application logs.
     /// </summary>
+    [Authorize(Roles = ApplicationRoles.Admin)]
     public class Logs : PageModel
     {
         private readonly ILogger<Logs> _logger;
@@ -16,6 +19,11 @@ namespace DiscussionBoard.Pages
         [BindProperty(SupportsGet = true)]
         public string Level { get; set; }
         public List<LogEntry> Entries { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 15;
+        public int TotalPages { get; set; }
 
         /// <summary>
         /// Logs Constructor, with injected objects.
@@ -47,6 +55,7 @@ namespace DiscussionBoard.Pages
             }
 
             FilterLogs();
+            PaginateLogs();
 
             return Page();
         }
@@ -90,6 +99,23 @@ namespace DiscussionBoard.Pages
                     entry.Level,
                     StringComparison.OrdinalIgnoreCase));
             */
+        }
+
+        private void PaginateLogs()
+        {
+            TotalPages = (int)Math.Ceiling((double)Entries.Count / PageSize);
+
+            if (PageNumber < 1)
+            {
+                PageNumber = 1;
+            }
+
+            if (PageNumber > TotalPages && TotalPages > 0)
+            {
+                PageNumber = TotalPages;
+            }
+
+            Entries = Entries.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
         }
     }
 }
