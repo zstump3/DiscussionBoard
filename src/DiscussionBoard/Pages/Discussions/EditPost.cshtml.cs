@@ -86,7 +86,7 @@ namespace DiscussionBoard.Pages.Discussions
                 return NotFound();
             }
 
-            return RedirectToPage("/Discussions/Detail",
+            return RedirectToPage("/Discussions/Details",
                 new {threadId});
         }
     }

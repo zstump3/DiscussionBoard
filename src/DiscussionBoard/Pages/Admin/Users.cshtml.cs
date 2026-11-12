@@ -19,7 +19,7 @@ namespace DiscussionBoard.Pages.Admin
         public List<SelectListItem> UserOptions { get; set; } = new();
 
         [BindProperty]
-        public string? SelectUserId { get; set; }
+        public string? SelectedUserId { get; set; }
 
         public ApplicationUser? SelectUser { get; set; }
 
@@ -52,20 +52,20 @@ namespace DiscussionBoard.Pages.Admin
         {
             await OnGetAsync();
 
-            if (string.IsNullOrWhiteSpace(SelectUserId))
+            if (string.IsNullOrWhiteSpace(SelectedUserId))
             {
                 ModelState.AddModelError(
-                    nameof(SelectUserId),
+                    nameof(SelectedUserId),
                     "Please select a user.");
                 return Page();
             }
 
-            SelectUser = await _userManager.FindByIdAsync(SelectUserId);
+            SelectUser = await _userManager.FindByIdAsync(SelectedUserId);
 
             if (SelectUser == null)
             {
                 ModelState.AddModelError(
-                    nameof(SelectUserId),
+                    nameof(SelectedUserId),
                     "There is no such user.");
                 return Page();
             }
@@ -80,7 +80,7 @@ namespace DiscussionBoard.Pages.Admin
         {
             await OnGetAsync();
 
-            if (string.IsNullOrWhiteSpace(SelectUserId))
+            if (string.IsNullOrWhiteSpace(SelectedUserId))
             {
                 StatusMessage= "Please select a valid user.";
                 return Page();
@@ -92,7 +92,7 @@ namespace DiscussionBoard.Pages.Admin
                 return Page();
             }
 
-            SelectUser = await _userManager.FindByIdAsync(SelectUserId);
+            SelectUser = await _userManager.FindByIdAsync(SelectedUserId);
 
             if (SelectUser == null)
             {
@@ -108,12 +108,12 @@ namespace DiscussionBoard.Pages.Admin
             if (RoleAction == "Remove")
             {
                 result = await _authorizationService.RemoveRoleAsync(
-                    User, SelectUserId, ApplicationRoles.Admin);
+                    User, SelectedUserId, ApplicationRoles.Admin);
             }
             else
             {
                 result = await _authorizationService.AddRoleAsync(
-                    User, SelectUserId, ApplicationRoles.Admin);
+                    User, SelectedUserId, ApplicationRoles.Admin);
             }
 
             if (result.Succeeded)
@@ -129,7 +129,21 @@ namespace DiscussionBoard.Pages.Admin
             IsSelectedUserAdmin = await _userManager.IsInRoleAsync(
                 SelectUser, ApplicationRoles.Admin);
 
-            return Page();
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostAddAsync()
+        {
+            RoleAction = "Add";
+
+            return await OnPostUpdateRoleAsync();
+        }
+
+        public async Task<IActionResult> OnPostRemoveAsync()
+        {
+            RoleAction = "Remove";
+
+            return await OnPostUpdateRoleAsync();
         }
     }
 }
