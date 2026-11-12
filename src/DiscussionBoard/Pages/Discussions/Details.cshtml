@@ -1,6 +1,8 @@
 ﻿@page "/Discussion/{threadId}"
+@using DiscussionBoard.Authorization
 @using DiscussionBoard.Services
 @model DiscussionBoard.Pages.Discussions.DetailsModel
+@inject IApplicationAuthorizationService AuthorizationService
 
 @{
     ViewData["Title"] = Model.Discussion.Title;
@@ -29,6 +31,15 @@
 </div>
 
 <p>@Model.Discussion.Content</p>
+
+@if (await AuthorizationService.CanEditAsync(User, Model.Discussion))
+{
+    <a asp-page="/Discussions/Edit"
+       asp-route-id="@Model.Discussion.Id"
+       class="btn btn-outline-primary">
+        Edit Discussion
+    </a>
+}
 
 <hr />
 

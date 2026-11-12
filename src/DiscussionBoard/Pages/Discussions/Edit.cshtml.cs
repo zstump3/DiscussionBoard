@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DiscussionBoard.Authorization;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
-using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,10 +10,12 @@ namespace DiscussionBoard.Pages.Discussions
     /// <summary>
     /// Handles displaying and updating an existing discussion thread
     /// </summary>
-    public class EditModel : PageModel
+    [Authorize]
+    public class ThreadEditModel : PageModel
     {
         private readonly DiscussionThreadService _threadService;
-        private readonly ILogger<EditModel> _logger;
+        private readonly ILogger<ThreadEditModel> _logger;
+        private readonly IApplicationAuthorizationService _authorizationService;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -24,31 +26,22 @@ namespace DiscussionBoard.Pages.Discussions
         /// <param name="logger">
         /// The logger used to record application events
         /// </param>
-        public EditModel(DiscussionThreadService threadService, ILogger<EditModel> logger)
+        /// <param name="applicationAuthorizationService">
+        ///Authorization service to ensure users are authorized
+        /// </param>
+        public ThreadEditModel(DiscussionThreadService threadService, ILogger<ThreadEditModel> logger,
+             IApplicationAuthorizationService applicationAuthorizationService)
         {
             _threadService = threadService;
             _logger = logger;
+            _authorizationService = applicationAuthorizationService;
         }
 
         /// <summary>
         /// Gets or sets the input data used to edit a discussion thread.
         /// </summary>
         [BindProperty]
-        public ThreadInput Input { get; set; } = new();
-
-        /// <summary>
-        /// Represents the validated input required to update a discussion thread.
-        /// </summary>
-        public class ThreadInput
-        {
-            [Required]
-            [StringLength(100)]
-            public string Title { get; set; } = string.Empty;
-
-            [Required]
-            [StringLength(500)]
-            public string Content { get; set; } = string.Empty;
-        }
+        public DiscussionEditViewModel Input { get; set; } = new();
 
         /// <summary>
         /// Retrieves the specified discussion thread and populates the edit form
@@ -70,6 +63,11 @@ namespace DiscussionBoard.Pages.Discussions
                 return NotFound();
             }
 
+            if (!await _authorizationService.CanEditAsync(User, thread))
+            {
+                return Forbid();
+            }
+
             Input.Title = thread.Title;
             Input.Content = thread.Content;
 
@@ -88,17 +86,22 @@ namespace DiscussionBoard.Pages.Discussions
         /// </returns>
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Thread with id {ThreadId} not found", id);
-                return Page();
-            }
             var thread = await _threadService.GetAsync(id);
 
             if (thread == null)
             {
                 _logger.LogWarning("Thread with id {ThreadId} not found", id);
                 return NotFound();
+            }
+
+            if (!await _authorizationService.CanEditAsync(User, thread))
+            {
+                return Forbid();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
             }
 
             var updatedThread = new DiscussionThread

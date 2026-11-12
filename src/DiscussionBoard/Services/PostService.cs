@@ -37,6 +37,19 @@ public class PostService
     }
 
     /// <summary>
+    /// Retrieves a post by its identifier.
+    /// Excludes the deleted posts.
+    /// </summary>
+    /// <param name="id">The ID of the post to retrieve</param>
+    /// <returns>The matching post or null if it does not exist or is deleted</returns>
+    public async Task<Post?> GetAsync(int id)
+    {
+        return await _context.Posts
+            .Include(p => p.ApplicationUser)
+            .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+    }
+
+    /// <summary>
     /// Retrieves all non-deleted posts and replies belonging to a specified discussion thread.
     /// Includes the author associated with each post.
     /// </summary>
@@ -74,6 +87,30 @@ public class PostService
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error adding post.");
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateAsync(Post post)
+    {
+        var existing = await GetAsync(post.Id);
+
+        if (existing == null)
+        {
+            return false;
+        }
+
+        existing.Title = post.Title;
+        existing.Content = post.Content;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error updating post.");
             throw;
         }
     }
