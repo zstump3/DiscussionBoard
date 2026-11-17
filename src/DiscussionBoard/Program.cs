@@ -101,6 +101,20 @@ namespace DiscussionBoard
 
             app.UseHttpsRedirection();
 
+            // app.Use(async (context, next) =>
+            // {
+            //     context.Response.Headers.Append("Content-Security-Policy",
+            //         "default-src 'none';" +
+            //         "script-src 'self'; " +
+            //         "connect-src 'self'; " +
+            //         "img-src 'self'; " +
+            //         "style-src 'self'; " +
+            //         "base-uri 'self'; " +
+            //         "form-action 'self';");
+            //
+            //     await next();
+            // });
+
             //This is the solution that I found to Clickjacking
             app.Use(async (context, next) =>
             {
