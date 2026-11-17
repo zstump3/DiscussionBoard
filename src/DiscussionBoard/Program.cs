@@ -101,6 +101,13 @@ namespace DiscussionBoard
 
             app.UseHttpsRedirection();
 
+            //This is the solution that I found to Clickjacking
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Append("X-Frame-Options", "SAMEORIGIN");
+                await next();
+            });
+
             app.UseRouting();
 
             app.UseAuthentication();
