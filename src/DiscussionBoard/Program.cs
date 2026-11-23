@@ -30,14 +30,21 @@ namespace DiscussionBoard
             // Get the location of the Logs folder for SeriLog
             string logPath = Path.Combine(builder.Environment.ContentRootPath, "Logs",  "discussionboard-.json");
 
-            builder.Services.AddSerilog((services, configuration) => configuration
-                .WriteTo.Console()
-                .WriteTo.File(
-                    new RenderedCompactJsonFormatter(),
-                    logPath,
-                    rollingInterval: RollingInterval.Day,
-                    shared: true)
-            );
+            builder.Configuration["Serilog:WriteTo:1:Args:configure:0:Args:path"] = logPath;
+
+            builder.Services.AddSerilog((services, configuration) =>
+                configuration.ReadFrom.Configuration(builder.Configuration));
+
+            //This is the old Serilog logger
+
+            // builder.Services.AddSerilog((services, configuration) => configuration
+            //     .WriteTo.Console()
+            //     .WriteTo.File(
+            //         new RenderedCompactJsonFormatter(),
+            //         logPath,
+            //         rollingInterval: RollingInterval.Day,
+            //         shared: true)
+            // );
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                                    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
