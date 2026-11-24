@@ -91,6 +91,10 @@ public class DiscussionThreadService
         {
             _context.DiscussionThreads.Add(thread);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "Discussion thread {ThreadId} created in forum {ForumId}",
+                thread.Id, thread.ForumId);
         }
         catch (DbUpdateException ex)
         {
@@ -123,11 +127,16 @@ public class DiscussionThreadService
         try
         {
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Discussion thread {ThreadId} updated.",
+                thread.Id);
+
             return true;
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error updating the discussion thread.");
+            _logger.LogError(ex, "Error updating the discussion thread {ThreadId}.",
+                thread.Id);
             throw;
         }
     }

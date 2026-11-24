@@ -148,8 +148,6 @@ namespace DiscussionBoard.Pages.Discussions
 
             await _postService.AddAsync(post);
 
-            _logger.LogInformation("Post {PostId} created inside the discussion {ThreadId}.", post.Id, threadId);
-
             return RedirectToPage("/Discussions/Details", new { threadId });
         }
     }

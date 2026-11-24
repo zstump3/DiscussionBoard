@@ -65,6 +65,9 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!await _authorizationService.CanEditAsync(User, thread))
             {
+                _logger.LogWarning("Access to edit thread with id {ThreadId} was denied.",
+                    thread.Id);
+
                 return Forbid();
             }
 
@@ -96,6 +99,9 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!await _authorizationService.CanEditAsync(User, thread))
             {
+                _logger.LogWarning("Attempt to update thread with id {ThreadId} was denied.",
+                    thread.Id);
+
                 return Forbid();
             }
 

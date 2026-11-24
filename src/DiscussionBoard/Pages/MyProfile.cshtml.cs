@@ -14,7 +14,7 @@ namespace DiscussionBoard.Pages
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserProfileService _userProfileService;
-
+        private readonly ILogger<MyProfileModel> _logger;
 
         /// <summary>
         /// Initializes a new instance of the MyProfileModel class.
@@ -25,10 +25,15 @@ namespace DiscussionBoard.Pages
         /// <param name="userProfileService">
         /// The service used to validate display name availability
         /// </param>
-        public MyProfileModel(UserManager<ApplicationUser> userManager, IUserProfileService userProfileService)
+        /// <param name="logger">
+        /// The logger used to record profile update operations
+        /// </param>
+        public MyProfileModel(UserManager<ApplicationUser> userManager, IUserProfileService userProfileService,
+            ILogger<MyProfileModel> logger)
         {
             _userManager = userManager;
             _userProfileService = userProfileService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -48,6 +53,8 @@ namespace DiscussionBoard.Pages
 
             if (user == null)
             {
+                _logger.LogWarning(
+                    "Unable to load profile because the user was not found.");
                 return;
             }
 
@@ -88,6 +95,8 @@ namespace DiscussionBoard.Pages
 
             if (user == null)
             {
+                _logger.LogWarning(
+                    "Profile update failed because current user could not be found.");
                 return Challenge();
             }
 
@@ -117,6 +126,10 @@ namespace DiscussionBoard.Pages
 
             if (!result.Succeeded)
             {
+                _logger.LogWarning(
+                    "Profile update failed for user {UserId}",
+                    user.Id);
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(
@@ -125,6 +138,8 @@ namespace DiscussionBoard.Pages
                 }
                 return Page();
             }
+
+            _logger.LogInformation("Profile updated for user {UserId}", user.Id);
 
             TempData["SuccessMessage"] = "Your profile has been successfully updated.";
             return RedirectToPage();

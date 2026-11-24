@@ -83,6 +83,10 @@ public class PostService
         {
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "Post with id {PostId} was created successfully at {ThreadId}.",
+                post.Id, post.DiscussionThreadId);
         }
         catch (DbUpdateException ex)
         {
@@ -106,11 +110,14 @@ public class PostService
         try
         {
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Post {PostId} was successfully updated.", post.Id);
+
             return true;
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error updating post.");
+            _logger.LogError(ex, "Error updating post {PostId}.", post.Id);
             throw;
         }
     }

@@ -12,13 +12,16 @@ namespace DiscussionBoard.Pages.Discussions
     {
         private readonly PostService _postService;
         private readonly IApplicationAuthorizationService _authorizationService;
+        private readonly ILogger<EditPostModel> _logger;
 
         public EditPostModel(
             PostService postService,
-            IApplicationAuthorizationService authorizationService)
+            IApplicationAuthorizationService authorizationService,
+            ILogger<EditPostModel> logger)
             {
             _postService = postService;
             _authorizationService = authorizationService;
+            _logger = logger;
             }
 
         [BindProperty] public DiscussionEditViewModel Input { get; set; } = new();
@@ -43,6 +46,10 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!await _authorizationService.CanEditAsync(User, post))
             {
+                _logger.LogWarning(
+                    "Access denied to post {PostId} with discussion {DiscussionId}",
+                    post.Id,  post.DiscussionThreadId);
+
                 return Forbid();
             }
 
@@ -64,6 +71,10 @@ namespace DiscussionBoard.Pages.Discussions
 
             if (!await _authorizationService.CanEditAsync(User, post))
             {
+                _logger.LogWarning(
+                    "The attempt to update post {PostId} with discussion {DiscussionId} was denied",
+                    post.Id,  post.DiscussionThreadId);
+
                 return Forbid();
             }
 
