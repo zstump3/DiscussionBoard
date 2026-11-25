@@ -121,8 +121,6 @@ namespace DiscussionBoard.Pages.Discussions
 
                 await _threadService.AddAsync(thread);
 
-                _logger.LogInformation("Discussion thread with id {forumId} created", forumId);
-
                 return RedirectToPage("/Forums/Details",
                     new {id = forumId});
         }

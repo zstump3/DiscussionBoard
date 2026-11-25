@@ -125,7 +125,6 @@ namespace DiscussionBoard.Pages.Discussions
 
                 return NotFound();
             }
-            _logger.LogInformation("Thread with id {ThreadId} was updated", id);
 
             return RedirectToPage("/Forums/Details", new { id = thread.ForumId });
         }

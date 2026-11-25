@@ -30,6 +30,10 @@ namespace DiscussionBoard.Services
             {
                 logFiles = Directory.GetFiles(_logDirectory, "*.json");
             }
+            catch (DirectoryNotFoundException)
+            {
+                return logs;
+            }
             catch (IOException e)
             {
                 _logger.LogError(e, "Could not read log files from {LogDirectory}", _logDirectory);

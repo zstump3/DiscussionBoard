@@ -15,6 +15,7 @@ namespace DiscussionBoard.Pages.Admin
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationAuthorizationService _authorizationService;
+        private ILogger<UsersModel> _logger;
 
         public List<SelectListItem> UserOptions { get; set; } = new();
 
@@ -30,10 +31,12 @@ namespace DiscussionBoard.Pages.Admin
         [BindProperty]
         public string? RoleAction { get; set; }
 
-        public UsersModel(UserManager<ApplicationUser> userManager,  IApplicationAuthorizationService authorizationService)
+        public UsersModel(UserManager<ApplicationUser> userManager,  IApplicationAuthorizationService authorizationService,
+            ILogger<UsersModel> logger)
         {
             _userManager = userManager;
             _authorizationService = authorizationService;
+            _logger = logger;
         }
 
         public async Task OnGetAsync()
@@ -82,12 +85,19 @@ namespace DiscussionBoard.Pages.Admin
 
             if (string.IsNullOrWhiteSpace(SelectedUserId))
             {
+                _logger.LogWarning(
+                    "Role change was rejected because there is no such user.");
+
                 StatusMessage= "Please select a valid user.";
                 return Page();
             }
 
             if (RoleAction != "Add" && RoleAction != "Remove")
             {
+                _logger.LogWarning(
+                    "Administrator {ActingUserId} submitted a invalid role action",
+                    _userManager.GetUserId(User));
+
                 StatusMessage = "Invalid role action.";
                 return Page();
             }
@@ -96,6 +106,9 @@ namespace DiscussionBoard.Pages.Admin
 
             if (SelectUser == null)
             {
+                _logger.LogWarning(
+                    "Role change rejected because selected user was not found");
+
                 StatusMessage = "There is no such user.";
                 return Page();
             }
